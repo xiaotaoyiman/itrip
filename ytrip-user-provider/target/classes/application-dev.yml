@@ -1,0 +1,7 @@
+### 项目端口号
+server:
+  port: 6677
+spring:
+  ### 项目应用名
+  application:
+    name: ytrip-user-provider
