@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.ekgc.ytrip.dao.HotelOrderDao">
+	<select id="findHotelOrderCountByQuery" parameterType="java.util.Map" resultType="java.lang.Integer">
+		select
+			IF(ISNULL(sum(iho.count)), 0, sum(iho.count)) count
+		from
+			itrip_hotel_order iho
+		<where>
+			<trim suffixOverrides="and">
+				<if test="hotelId != null">iho.hotelId=#{hotelId} and </if>
+				<if test="id != null">iho.roomId=#{id} and </if>
+				<if test="orderStatus">iho.orderStatus=#{orderStatus} and </if>
+				<if test="startTime != null">
+					DATE_FORMAT(iho.checkOutDate, '%Y-%m-%d') &gt;= DATE_FORMAT(#{startTime}, '%Y-%m-%d')
+					and
+					DATE_FORMAT(iho.checkInDate, '%Y-%m-%d') &lt;= DATE_FORMAT(#{endTime}, '%Y-%m-%d') and
+				</if>
+			</trim>
+		</where>
+	</select>
+
+	<select id="findHotelOrderByQuery" parameterType="java.util.Map" resultMap="hotelOrderMap">
+		SELECT
+			id,
+			userId,
+			orderType,
+			orderNo,
+			tradeNo,
+			hotelId,
+			hotelName,
+			roomId,
+			COUNT,
+			bookingDays,
+			checkInDate,
+			checkOutDate,
+			orderStatus,
+			payAmount,
+			payType,
+			noticePhone,
+			noticeEmail,
+			specialRequirement,
+			isNeedInvoice,
+			invoiceType,
+			invoiceHead,
+			linkUserName,
+			bookType,
+			creationDate
+		FROM
+			itrip_hotel_order
+		<where>
+			<trim suffixOverrides="and">
+				<if test="id != null">id=#{id} and </if>
+				<if test="orderNo != null">orderNo=#{orderNo} and </if>
+				<if test="userId != null">userId=#{userId} and </if>
+				<if test="orderStatus != null">orderStatus=#{orderStatus} and </if>
+				<if test="orderType != null">orderType=#{orderType} and </if>
+				<if test="linkUserName != null">linkUserName like #{linkUserName} and </if>
+				<if test="startDate != null">UNIX_TIMESTAMP(checkInDate) &gt;= UNIX_TIMESTAMP(#{startDate}) and </if>
+				<if test="endDate != null">UNIX_TIMESTAMP(checkOutDate) &lt;= UNIX_TIMESTAMP(#{endDate}) and </if>
+			</trim>
+		</where>
+		<if test="begin != null">limit #{begin},#{size}</if>
+	</select>
+
+	<select id="findOrderLinkUserByQuery" parameterType="java.util.Map" resultMap="orderLinkUserMap">
+		SELECT
+			id,
+			orderId,
+			linkUserId,
+			linkUserName
+		FROM
+			itrip_order_link_user
+		<where>
+			<trim suffixOverrides="and">
+				<if test="orderId != null">orderId=#{orderId} and </if>
+			</trim>
+		</where>
+	</select>
+
+	<insert id="addHotelOrder" parameterType="HotelOrder">
+		insert into
+			itrip_hotel_order(
+			<trim suffixOverrides=",">
+				<if test="userId != null">userId,</if>
+				<if test="orderType != null">orderType,</if>
+				<if test="orderNo != null">orderNo,</if>
+				<if test="hotelId != null">hotelId,</if>
+				<if test="hotelName != null">hotelName,</if>
+				<if test="roomId != null">roomId,</if>
+				<if test="count != null">count,</if>
+				<if test="checkInDate != null">checkInDate,</if>
+				<if test="checkOutDate != null">checkOutDate,</if>
+				<if test="noticePhone != null">noticePhone,</if>
+				<if test="noticeEmail != null">noticeEmail,</if>
+				<if test="specialRequirement != null">specialRequirement,</if>
+				<if test="isNeedInvoice != null">isNeedInvoice,</if>
+				<if test="invoiceType != null">invoiceType,</if>
+				<if test="invoiceHead != null">invoiceHead,</if>
+				<if test="bookingDays != null">bookingDays,</if>
+				<if test="payAmount != null">payAmount,</if>
+				<if test="orderStatus != null">orderStatus,</if>
+				<if test="creationDate != null">creationDate,</if>
+				<if test="linkUserName != null">linkUserName,</if>
+				<if test="createdBy != null">createdBy,</if>
+			</trim>
+			)
+		values(
+			<trim suffixOverrides=",">
+				<if test="userId != null">#{userId},</if>
+				<if test="orderType != null">#{orderType},</if>
+				<if test="orderNo != null">#{orderNo},</if>
+				<if test="hotelId != null">#{hotelId},</if>
+				<if test="hotelName != null">#{hotelName},</if>
+				<if test="roomId != null">#{roomId},</if>
+				<if test="count != null">#{count},</if>
+				<if test="checkInDate != null">#{checkInDate},</if>
+				<if test="checkOutDate != null">#{checkOutDate},</if>
+				<if test="noticePhone != null">#{noticePhone},</if>
+				<if test="noticeEmail != null">#{noticeEmail},</if>
+				<if test="specialRequirement != null">#{specialRequirement},</if>
+				<if test="isNeedInvoice != null">#{isNeedInvoice},</if>
+				<if test="invoiceType != null">#{invoiceType},</if>
+				<if test="invoiceHead != null">#{invoiceHead},</if>
+				<if test="bookingDays != null">#{bookingDays},</if>
+				<if test="payAmount != null">#{payAmount},</if>
+				<if test="orderStatus != null">#{orderStatus},</if>
+				<if test="creationDate != null">#{creationDate},</if>
+				<if test="linkUserName != null">#{linkUserName},</if>
+				<if test="createdBy != null">#{createdBy},</if>
+			</trim>
+		)
+	</insert>
+
+	<insert id="addOrderLinkUser" parameterType="OrderLinkUser">
+		insert into
+		itrip_order_link_user(
+		<trim suffixOverrides=",">
+			<if test="orderId != null">orderId,</if>
+			<if test="linkUserId != null">linkUserId,</if>
+			<if test="linkUserName != null">linkUserName,</if>
+		</trim>
+		)
+		values(
+		<trim suffixOverrides=",">
+			<if test="orderId != null">#{orderId},</if>
+			<if test="linkUserId != null">#{linkUserId},</if>
+			<if test="linkUserName != null">#{linkUserName},</if>
+		</trim>
+		)
+	</insert>
+
+	<update id="updateHotelOrder" parameterType="HotelOrder">
+		update
+			itrip_hotel_order
+		set
+			<trim suffixOverrides=",">
+				<if test="orderStatus != null">orderStatus=#{orderStatus},</if>
+				<if test="payType != null">payType=#{payType},</if>
+				<if test="tradeNo != null">tradeNo=#{tradeNo},</if>
+				<if test="modifiedBy != null">modifiedBy=#{modifiedBy},</if>
+				<if test="modifyDate != null">modifyDate=#{modifyDate},</if>
+			</trim>
+		<where>
+			<if test="id != null">id=#{id}</if>
+		</where>
+	</update>
+
+	<resultMap id="hotelOrderMap" type="HotelOrder">
+		<id property="id" javaType="java.lang.Long" column="id" />
+		<result property="userId" javaType="java.lang.Long" column="userId" />
+		<result property="orderType" javaType="java.lang.Integer" column="orderType" />
+		<result property="orderNo" javaType="java.lang.String" column="orderNo" />
+		<result property="tradeNo" javaType="java.lang.String" column="tradeNo" />
+		<result property="hotelId" javaType="java.lang.Long" column="hotelId" />
+		<result property="hotelName" javaType="java.lang.String" column="hotelName" />
+		<result property="roomId" javaType="java.lang.Long" column="roomId" />
+		<result property="count" javaType="java.lang.Integer" column="count" />
+		<result property="bookingDays" javaType="java.lang.Integer" column="bookingDays" />
+		<result property="checkInDate" javaType="java.util.Date" column="checkInDate" />
+		<result property="checkOutDate" javaType="java.util.Date" column="checkOutDate" />
+		<result property="orderStatus" javaType="java.lang.Integer" column="orderStatus" />
+		<result property="payAmount" javaType="java.lang.Double" column="payAmount" />
+		<result property="payType" javaType="java.lang.Integer" column="payType" />
+		<result property="noticePhone" javaType="java.lang.String" column="noticePhone" />
+		<result property="noticeEmail" javaType="java.lang.String" column="noticeEmail" />
+		<result property="specialRequirement" javaType="java.lang.String" column="specialRequirement" />
+		<result property="isNeedInvoice" javaType="java.lang.Integer" column="isNeedInvoice" />
+		<result property="invoiceType" javaType="java.lang.Integer" column="invoiceType" />
+		<result property="invoiceHead" javaType="java.lang.String" column="invoiceHead" />
+		<result property="linkUserName" javaType="java.lang.String" column="linkUserName" />
+		<result property="bookType" javaType="java.lang.Integer" column="bookType" />
+		<result property="creationDate" javaType="java.util.Date" column="creationDate" />
+	</resultMap>
+
+	<resultMap id="orderLinkUserMap" type="OrderLinkUser">
+		<id property="id" javaType="java.lang.Long" column="id" />
+ 		<result property="orderId" javaType="java.lang.Long" column="orderId" />
+ 		<result property="linkUserId" javaType="java.lang.Long" column="linkUserId" />
+ 		<result property="linkUserName" javaType="java.lang.String" column="linkUserName" />
+	</resultMap>
+</mapper>

@@ -13,7 +13,7 @@ public class EmailUtil {
 	private JavaMailSender mailSender;
 
 	// 异步发送验证码
-	@Async
+	@Async("asyncServiceExecutor")
 	public void sendEmail(String email, String activeCode) {
 		// 创建邮件发送对象，使用MimeMailMessage对象可以发送HTML格式的邮件
 		SimpleMailMessage mailMessage = new SimpleMailMessage();

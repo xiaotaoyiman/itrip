@@ -34,9 +34,9 @@ public class UserTransportImpl implements UserTransport {
 	 * @return
 	 * @throws Exception
 	 */
-	@RequestMapping(value = "/email", method = RequestMethod.POST)
-	public boolean userRegisterByEmail(@RequestBody User user) throws Exception {
-		return userService.userRegisterByEmail(user);
+	@RequestMapping(value = "/register", method = RequestMethod.POST)
+	public boolean userRegister(@RequestBody User user) throws Exception {
+		return userService.userRegister(user);
 	}
 
 	/**
@@ -49,5 +49,28 @@ public class UserTransportImpl implements UserTransport {
 	@RequestMapping(value = "/active", method = RequestMethod.POST)
 	public boolean activateUser(@RequestParam String userCode, @RequestParam String activeCode) throws Exception {
 		return userService.activateUser(userCode, activeCode);
+	}
+
+	/**
+	 * <b>用户登录</b>
+	 * @param userCode
+	 * @param userPassword
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "/login", method = RequestMethod.POST)
+	public User loginUser(String userCode, String userPassword) throws Exception {
+		return userService.loginUser(userCode, userPassword);
+	}
+
+	/**
+	 * <b>根据用户编码查询用户信息</b>
+	 * @param userCode
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "/userCode", method = RequestMethod.POST)
+	public User getUserByUserCode(@RequestParam String userCode) throws Exception {
+		return userService.getUserByUserCode(userCode);
 	}
 }

@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.ekgc.ytrip.dao.HotelCommentDao">
+	<select id="findCommentByQuery" parameterType="java.util.Map" resultMap="commentMap">
+		SELECT
+			id,
+			hotelId,
+			productType,
+			content,
+			positionScore,
+			facilitiesScore,
+			serviceScore,
+			hygieneScore,
+			score,
+			isOk,
+			isHavingImg
+		FROM
+			itrip_comment
+		<where>
+			<trim suffixOverrides="and">
+				<if test="hotelId != null">hotelId=#{hotelId} and </if>
+				<if test="productType != null">productType=#{productType} and </if>
+				<if test="isOk != null">isOk=#{isOk} and </if>
+				<if test="isHavingImg != null">isHavingImg=#{isHavingImg} and </if>
+			</trim>
+		</where>
+		<if test="beginPos != null">limit #{beginPos}, #{pageSize}</if>
+	</select>
+
+	<select id="findCommentScoreByQuery" parameterType="java.util.Map" resultMap="scoreMap">
+		SELECT
+			format(avg(positionScore), 1) avgPositionScore,
+			format(avg(facilitiesScore), 1) avgFacilitiesScore,
+			format(avg(serviceScore), 1) avgServiceScore,
+			format(avg(hygieneScore), 1) avgHygieneScore,
+			format(avg(score), 1) avgScore
+		FROM
+			itrip_comment
+		<where>
+			<trim suffixOverrides="and">
+				<if test="hotelId != null">hotelId=#{hotelId} and </if>
+				<if test="productType != null">productType=#{productType} and </if>
+			</trim>
+		</where>
+	</select>
+
+	<insert id="saveComment" parameterType="Comment">
+		insert into
+			itrip_comment(
+				hotelId,
+				productId,
+				orderId,
+				productType,
+				content,
+				userId,
+				isHavingImg,
+				positionScore,
+				facilitiesScore,
+				serviceScore,
+				hygieneScore,
+				score,
+				tripMode,
+				isOk,
+				createdBy,
+				creationDate
+			)
+		values(
+			#{hotelId},
+			#{productId},
+			#{orderId},
+			#{productType},
+			#{content},
+			#{userId},
+			#{isHavingImg},
+			#{positionScore},
+			#{facilitiesScore},
+			#{serviceScore},
+			#{hygieneScore},
+			#{score},
+			#{tripMode},
+			#{isOk},
+			#{createdBy},
+			#{creationDate}
+		)
+	</insert>
+
+	<resultMap id="scoreMap" type="Score">
+		<result property="avgPositionScore" javaType="java.lang.Double" column="avgPositionScore" />
+		<result property="avgFacilitiesScore" javaType="java.lang.Double" column="avgFacilitiesScore" />
+		<result property="avgServiceScore" javaType="java.lang.Double" column="avgServiceScore" />
+		<result property="avgHygieneScore" javaType="java.lang.Double" column="avgHygieneScore" />
+		<result property="avgScore" javaType="java.lang.Double" column="avgScore" />
+	</resultMap>
+
+	<resultMap id="commentMap" type="Comment">
+		<id property="id" javaType="java.lang.Long" column="id" />
+		<result property="hotelId" javaType="java.lang.Long" column="hotelId" />
+		<result property="productType" javaType="java.lang.Integer" column="productType" />
+		<result property="content" javaType="java.lang.String" column="content" />
+		<result property="positionScore" javaType="java.lang.Integer" column="positionScore" />
+		<result property="facilitiesScore" javaType="java.lang.Integer" column="facilitiesScore" />
+		<result property="serviceScore" javaType="java.lang.Integer" column="serviceScore" />
+		<result property="hygieneScore" javaType="java.lang.Integer" column="hygieneScore" />
+		<result property="score" javaType="java.lang.Integer" column="score" />
+		<result property="isOk" javaType="java.lang.Integer" column="isOk" />
+		<result property="isHavingImg" javaType="java.lang.Integer" column="isHavingImg" />
+	</resultMap>
+</mapper>

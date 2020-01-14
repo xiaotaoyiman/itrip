@@ -1,0 +1,10 @@
+### 项目启动端口号
+server:
+  port: 9977
+spring:
+  ### 项目应用名
+  application:
+    name: ytrip-search-provider
+  data:
+    solr:
+      host: http://localhost:8080/solr/hotel

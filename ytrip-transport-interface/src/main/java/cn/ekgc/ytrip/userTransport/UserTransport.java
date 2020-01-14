@@ -31,8 +31,8 @@ public interface UserTransport {
 	 * @return
 	 * @throws Exception
 	 */
-	@RequestMapping(value = "/email", method = RequestMethod.POST)
-	boolean userRegisterByEmail(@RequestBody User user) throws Exception;
+	@RequestMapping(value = "/register", method = RequestMethod.POST)
+	boolean userRegister(@RequestBody User user) throws Exception;
 
 	/**
 	 * <b>激活注册的用户</b>
@@ -43,4 +43,23 @@ public interface UserTransport {
 	 */
 	@RequestMapping(value = "/active", method = RequestMethod.POST)
 	boolean activateUser(@RequestParam String userCode, @RequestParam String activeCode) throws Exception;
+
+	/**
+	 * <b>用户登录</b>
+	 * @param userCode
+	 * @param userPassword
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "/login", method = RequestMethod.POST)
+	User loginUser(@RequestParam String userCode, @RequestParam String userPassword) throws Exception;
+
+	/**
+	 * <b>根据用户编码查询用户信息</b>
+	 * @param userCode
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "/userCode", method = RequestMethod.POST)
+	User getUserByUserCode(@RequestParam String userCode) throws Exception;
 }

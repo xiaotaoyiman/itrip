@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.ekgc.ytrip.dao.HotelTempStoreDao">
+	<select id="findHotelTempStoreByQuery" parameterType="java.util.Map" resultType="java.lang.Integer">
+		SELECT
+			min(store) store
+		FROM
+			itrip_hotel_temp_store
+		<where>
+			<trim suffixOverrides="and">
+				<if test="hotelId != null">hotelId=#{hotelId} and </if>
+				<if test="id != null">roomId=#{id} and </if>
+				<if test="startTime != null">
+					DATE_FORMAT(recordDate, '%Y-%m-%d') between DATE_FORMAT(#{startTime}, '%Y-%m-%d')
+				and
+					DATE_FORMAT(#{endTime}, '%Y-%m-%d') and
+				</if>
+			</trim>
+		</where>
+	</select>
+
+	<select id="findTempStore" parameterType="java.util.Map" resultType="java.lang.Integer">
+		SELECT
+			store
+		FROM
+			itrip_product_store
+		<where>
+			<trim suffixOverrides="and">
+				<if test="productType != null">productType=#{productType} and </if>
+				<if test="id != null">productId=#{id} and </if>
+			</trim>
+		</where>
+	</select>
+</mapper>

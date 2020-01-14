@@ -6,6 +6,7 @@ import cn.ekgc.ytrip.service.UserService;
 import cn.ekgc.ytrip.util.ConstantUtil;
 import cn.ekgc.ytrip.util.ProduceActiveCode;
 import cn.ekgc.ytrip.util.communication.email.EmailUtil;
+import cn.ekgc.ytrip.util.communication.phone.NoteUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
@@ -30,6 +31,8 @@ public class UserServiceImpl implements UserService {
 	private EmailUtil emailUtil;
 	@Autowired
 	private StringRedisTemplate redisTemplate;
+	@Autowired
+	private NoteUtil noteUtil;
 
 	/**
 	 * <b>根据用户提供的数据，校验其是否可用</b>
@@ -50,19 +53,25 @@ public class UserServiceImpl implements UserService {
 	}
 
 	/**
-	 * <b>保存使用邮箱注册的用户信息</b>
+	 * <b>保存注册的用户信息</b>
 	 * @param user
 	 * @return
 	 * @throws Exception
 	 */
-	public boolean userRegisterByEmail(User user) throws Exception {
+	public boolean userRegister(User user) throws Exception {
 		try {
 			// 保存用户信息
 			userDao.saveUser(user);
 			// 生成激活码
 			String activeCode = ProduceActiveCode.getActiveCode();
-			// 发送邮件
-			emailUtil.sendEmail(user.getUserCode(), activeCode);
+			// 发送邮件或短信
+			if (user.getUserCode().matches("^\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*$")) {
+				// 发送邮件
+				emailUtil.sendEmail(user.getUserCode(), activeCode);
+			} else {
+				// 发送短信
+				noteUtil.sendNote(user.getUserCode(), activeCode);
+			}
 			// 将激活码保存到Redis中
 			redisTemplate.opsForValue().set(user.getUserCode(),activeCode);
 			// 对于该存入redis的key设置有效时间
@@ -97,5 +106,43 @@ public class UserServiceImpl implements UserService {
 			}
 		}
 		return false;
+	}
+
+	/**
+	 * <b>用户登录</b>
+	 * @param userCode
+	 * @param userPassword
+	 * @return
+	 * @throws Exception
+	 */
+	public User loginUser(String userCode, String userPassword) throws Exception {
+		// 封装查询参数
+		Map<String, Object> queryMap = new HashMap<String, Object>();
+		queryMap.put("userCode", userCode);
+		queryMap.put("userPassword", userPassword);
+		// 查询结果
+		List<User> list = userDao.findUserListByQuery(queryMap);
+		if (list != null && list.size() > 0) {
+			return list.get(0);
+		}
+		return null;
+	}
+
+	/**
+	 * <b>根据用户编码查询用户信息</b>
+	 * @param userCode
+	 * @return
+	 * @throws Exception
+	 */
+	public User getUserByUserCode(String userCode) throws Exception {
+		// 封装查询参数
+		Map<String, Object> queryMap = new HashMap<String, Object>();
+		queryMap.put("userCode", userCode);
+		// 查询结果
+		List<User> list = userDao.findUserListByQuery(queryMap);
+		if (list != null && list.size() > 0) {
+			return list.get(0);
+		}
+		return null;
 	}
 }

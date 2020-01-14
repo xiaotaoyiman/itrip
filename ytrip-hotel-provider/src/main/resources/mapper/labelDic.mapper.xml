@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.ekgc.ytrip.dao.LabelDicDao">
+	<select id="findHotelFeatureByQuery" parameterType="java.util.Map" resultMap="labelDicMap">
+		SELECT
+			id,
+			NAME,
+			value,
+			description,
+			pic
+		FROM
+			itrip_label_dic
+		<where>
+			<trim suffixOverrides="and">
+				<if test="parentId != null">parentId=#{parentId} and</if>
+				<if test="id != null">id=#{id} and</if>
+			</trim>
+		</where>
+	</select>
+
+	<select id="getLabelDic" parameterType="java.lang.Long" resultMap="labelDicMap">
+		SELECT
+			ild.id,
+			ild.name,
+			ild.value,
+			ild.description,
+			ild.pic
+		FROM
+			itrip_label_dic ild join itrip_hotel_feature ihf on ild.id=ihf.featureId
+		<where>
+			<trim suffixOverrides="and">
+				<if test="id != null">ihf.hotelId=#{id} and</if>
+			</trim>
+		</where>
+	</select>
+
+	<resultMap id="labelDicMap" type="LabelDic">
+		<id property="id" javaType="java.lang.Long" column="id"/>
+		<result property="name" javaType="java.lang.String" column="name" />
+		<result property="value" javaType="java.lang.String" column="value" />
+		<result property="description" javaType="java.lang.String" column="description" />
+		<result property="pic" javaType="java.lang.String" column="pic" />
+	</resultMap>
+</mapper>

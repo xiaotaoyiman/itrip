@@ -23,7 +23,7 @@ public interface UserService {
 	 * @return
 	 * @throws Exception
 	 */
-	boolean userRegisterByEmail(User user) throws Exception;
+	boolean userRegister(User user) throws Exception;
 
 	/**
 	 * <b>激活注册用户</b>
@@ -33,4 +33,21 @@ public interface UserService {
 	 * @throws Exception
 	 */
 	boolean activateUser(String userCode, String activeCode) throws Exception;
+
+	/**
+	 * <b>用户登录</b>
+	 * @param userCode
+	 * @param userPassword
+	 * @return
+	 * @throws Exception
+	 */
+	User loginUser(String userCode, String userPassword) throws Exception;
+
+	/**
+	 * <b>根据用户编码查询用户信息</b>
+	 * @param userCode
+	 * @return
+	 * @throws Exception
+	 */
+	User getUserByUserCode(String userCode) throws Exception;
 }

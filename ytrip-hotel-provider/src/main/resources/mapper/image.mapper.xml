@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.ekgc.ytrip.dao.ImageDao">
+	<select id="findImageListByQuery" parameterType="java.util.Map" resultMap="imageMap">
+		SELECT
+			id,
+			TYPE,
+			targetId,
+			POSITION,
+			imgUrl
+		FROM
+			itrip_image
+		<where>
+			<trim suffixOverrides="and">
+				<if test="targetId != null">targetId=#{targetId} and </if>
+				<if test="type != null">type=#{type} and </if>
+			</trim>
+		</where>
+	</select>
+
+	<resultMap id="imageMap" type="Image">
+		<id property="id" javaType="java.lang.Long" column="id" />
+		<result property="type" javaType="java.lang.String" column="type" />
+		<result property="targetId" javaType="java.lang.Long" column="targetId" />
+		<result property="position" javaType="java.lang.Integer" column="position" />
+		<result property="imgUrl" javaType="java.lang.String" column="imgUrl" />
+	</resultMap>
+</mapper>
